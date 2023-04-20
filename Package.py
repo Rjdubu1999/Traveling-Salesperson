@@ -22,7 +22,7 @@ class Package:
     def __str__(self):
         return "%s, %s, %s, %s, %s, %s, %s" % (self.package_ID, self.package_address,
                                                self.package_city, self.package_state, self.package_zipcode,
-                                               self.package_deadline, self.package_delivery_status)
+                                               self.package_deadline, self.package_delivery_status)#, self.delivery_time)
 
     def update_package_info(self, updated_address, updated_name, updated_city, updated_zipcode, updated_status):
         self.updated_address = updated_address

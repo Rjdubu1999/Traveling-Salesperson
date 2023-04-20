@@ -39,3 +39,14 @@ class Hashtable:
 
         if key in location:
             location.remove(key)
+
+    def update(self, ID, Package):
+
+        key = hash(ID) % 10
+
+        for x in self.list[key]:
+
+            if x[0] == ID:
+                x[1] = Package
+
+        return

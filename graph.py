@@ -1,9 +1,14 @@
 import csv
-
+from datetime import datetime, timedelta
+from load_packages import trucktwo
+from load_packages import truckthree
 import delivery_truck
 from load_packages import truckone
+from load_packages import alltrucks
 from delivery_truck import DeliveryTruck
 from csv_reader import myhash
+
+import Package
 '''with open('File_Csv/c950_address.csv') as address_file2:
     reader = csv.reader(address_file2, delimeter=',')
     listAddresses = []
@@ -39,7 +44,7 @@ def loadDistanceData(filename):
 address_list = loadAddressData('File_Csv/c950_address.csv')
 distance_list = loadDistanceData('File_Csv/c950_distances.csv')
 
-print(address_list)
+#print(address_list)
 
 
 def distanceBetween(address1, address2, addressList, distanceList):
@@ -65,11 +70,11 @@ def distanceBetween(address1, address2, addressList, distanceList):
             return distanceList[j][i]
 
 a = distanceBetween("1060 Dalton Ave S", "1330 2100 S", address_list, distance_list)
-print(a)
-#addressData = loadAddressData('File_Csv/c950_address.csv')
+#print(a)
+addressData = loadAddressData('File_Csv/c950_address.csv')
 #addressData2 = loadAddressData('File_Csv/c950_address.csv')
 
-def minDistFrom2(truck, listAddresses, list2DDistances, hTable):
+def minimum_distance(truck, listAddresses, list2DDistances, hTable):
     dictPackageDistance = dict()
     truck_packages = [hTable.search(i) for i in truck.packages]
     #for p in truck_packages:
@@ -89,58 +94,87 @@ def minDistFrom2(truck, listAddresses, list2DDistances, hTable):
     else:
         return None
 
-print(minDistFrom2(truckone, address_list, distance_list, myhash))
+#print(minimum_distance(truckthree, address_list, distance_list, myhash))
+
+
+package_distance = minimum_distance(truckone, address_list, distance_list, myhash)
+
+
+def truckDeliverPackages(truck, listAddresses, list2DDistances, hTable):
+
+    flag = True
+
+    totalDistance = 0.0
+
+    while flag:
+
+        x = minimum_distance(truck, listAddresses, list2DDistances, hTable)
+
+        if x == None:
+
+            flag = False
+
+            break
+
+        else:
+
+            x.package_delivery_status = 'DELIVERED'
+            print(x)
+
+            dist = distanceBetween(truck.current_location, x.package_address, listAddresses, list2DDistances)
+            #print(truck.current_time)
+            #print(truck.speed)
+            #print(dist)
+            truck.current_time += timedelta(minutes = float(float(dist)/float(truck.speed)))
+            print(truck.current_time)
+            x.tDel = truck.current_time
+
+            totalDistance += float(dist)
+
+            truck.current_location = x.package_address
+
+            hTable.update(x.package_ID, x)
+
+    disToHub = distanceBetween(truck.current_location, listAddresses[0], listAddresses, list2DDistances)
+    #truck.speed = float(truck.speed)
+    truck.current_time += timedelta(minutes = float(float(disToHub)/float(truck.speed)))
+    print(truck.current_time)
+    return [disToHub, totalDistance, truck.current_time]
+
+
+print(truckDeliverPackages(trucktwo,address_list, distance_list, myhash)[2], "\n")
+
+print(truckDeliverPackages(truckone,address_list, distance_list, myhash)[2], "\n")
+
+print(truckDeliverPackages(truckthree,address_list, distance_list, myhash)[2], "\n")
 
 '''
-def find_distance(address1, address2):
-    with open('File_Csv/c950_distances.csv') as distances:
-        reader = csv.reader(distances)
-        reader = list(reader)
-        dist = reader[address1][address2]
-        if dist == '':
-            dist = reader[address2][address1]
-        return float(dist)
+def package_delivery(truck, address_list, distance_list, htable):
+    flag = True
+    distance_keeper = 0.0
+    while flag:
+        var = minimum_distance(truck, address_list, distance_list, htable)
+        if var == None:
+            flag = False
+            break
+        else:
+            var.delivery_status = 'Delivered'
+            distance = distanceBetween(truck.current_location, package_distance, address_list, distance_list )
+            print(distance)
+            
+            truck.current_time += datetime.timedelta(minutes=float(distance/truck.speed))
+            var.tDel = truck.current_time
+            distance_keeper += distance
+            truck.current_location = var.package_address
+            htable.update(var.package_id, var)
 
-index1 = addressData.index("195 W Oakland Ave")
-index2 = addressData.index("233 Canyon Rd")
-#print(index2 )
-#print(index1)
-
-print(find_distance(index1, index2))
+            distance_to_hub = distanceBetween(truck.current_location,address_list[0], address_list, distance_list)
+            truck.current_time += datetime.timedelta(minutes=float(distance_to_hub/truck.speed))
+            return[distance_to_hub, distance_keeper, truck.current_time] 
 
 
-prin_dist = find_distance(addressData.index("195 W Oakland Ave"), addressData.index("233 Canyon Rd"))
-#print(prin_dist)
+print(package_delivery(truckone, address_list, distance_list, myhash)) '''
+'''
 '''
 
 
-'''
-def minDistFrom2(DeliveryTruck, hTable):
-
-    dictPackageDistance = dict()
-    packagelist = []
-    for i in DeliveryTruck.packages:
-        packagelist.append(hTable.search(i))
-    for x in packagelist:
-        print(x.package_ID)
-    truckPackages = [x for x in packagelist if x.package_address != DeliveryTruck.current_location and x.package_delivery_status == 'TRANSIT']
-
-    for pack in truckPackages:
-        index = addressData.index(DeliveryTruck.current_location)
-        print(index)
-        index_two = addressData.index(pack.package_address)
-        print(index_two)
-        dictPackageDistance[pack.package_ID] = float(find_distance(index, index_two))
-
-    if len(dictPackageDistance) > 0:
-
-        return hTable.search(int(min(dictPackageDistance.items(), key = lambda x : x[1])[0]))
-
-    else:
-
-        return None
-
-a = minDistFrom2(truckone, myhash)
-print(a)
-
-'''
