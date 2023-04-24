@@ -20,23 +20,21 @@ class Package:
         # time departed from hub
 
     def __str__(self):
-        return "%s, %s, %s, %s, %s, %s, %s" % (self.package_ID, self.package_address,
+        return "%s, %s, %s, %s, %s, %s, %s, %s" % (self.package_ID, self.package_address,
                                                self.package_city, self.package_state, self.package_zipcode,
                                                self.package_deadline, self.package_delivery_status)#, self.delivery_time)
 
-    def update_package_info(self, updated_address, updated_name, updated_city, updated_zipcode, updated_status):
-        self.updated_address = updated_address
-        self.updated_name = updated_name
-        self.updated_city = updated_city
-        self.updated_ziip = updated_zipcode
-        self.updated_status = updated_status
+def package_status(self):
 
-    def update(self, status):
-        self.status = status
 
-    def return_status(self):
+
+'''
+def update(self, status):
+    self.status = status
+
+def return_status(self):
         return self.status
-
+'''
 
 
 

@@ -7,7 +7,7 @@ from load_packages import truckone
 from load_packages import alltrucks
 from delivery_truck import DeliveryTruck
 from csv_reader import myhash
-
+from load_packages import TODAY
 import Package
 '''with open('File_Csv/c950_address.csv') as address_file2:
     reader = csv.reader(address_file2, delimeter=',')
@@ -101,80 +101,178 @@ package_distance = minimum_distance(truckone, address_list, distance_list, myhas
 
 
 def truckDeliverPackages(truck, listAddresses, list2DDistances, hTable):
-
     flag = True
-
     totalDistance = 0.0
-
     while flag:
-
         x = minimum_distance(truck, listAddresses, list2DDistances, hTable)
-
         if x == None:
-
             flag = False
-
             break
-
         else:
-
             x.package_delivery_status = 'DELIVERED'
-            print(x)
-
+            #print(x)
             dist = distanceBetween(truck.current_location, x.package_address, listAddresses, list2DDistances)
             #print(truck.current_time)
             #print(truck.speed)
             #print(dist)
             truck.current_time += timedelta(minutes = float(float(dist)/float(truck.speed)))
-            print(truck.current_time)
+            #print(truck.current_time)
             x.tDel = truck.current_time
-
             totalDistance += float(dist)
-
             truck.current_location = x.package_address
-
             hTable.update(x.package_ID, x)
-
     disToHub = distanceBetween(truck.current_location, listAddresses[0], listAddresses, list2DDistances)
-    #truck.speed = float(truck.speed)
+    truck.speed = float(truck.speed)
     truck.current_time += timedelta(minutes = float(float(disToHub)/float(truck.speed)))
-    print(truck.current_time)
+    #print(truck.current_time)
     return [disToHub, totalDistance, truck.current_time]
 
 
-print(truckDeliverPackages(trucktwo,address_list, distance_list, myhash)[2], "\n")
 
-print(truckDeliverPackages(truckone,address_list, distance_list, myhash)[2], "\n")
 
-print(truckDeliverPackages(truckthree,address_list, distance_list, myhash)[2], "\n")
+#print(truckDeliverPackages(trucktwo, address_list, distance_list, myhash))
 
-'''
-def package_delivery(truck, address_list, distance_list, htable):
+#print(truckDeliverPackages(truckone, address_list, distance_list, myhash))
+
+#print(truckDeliverPackages(truckthree, address_list, distance_list, myhash)[2], "\n")
+
+
+def delivery(truck, listAddresses, list2DDistances, hTable):
     flag = True
-    distance_keeper = 0.0
+    totalDistance = 0.0
+    delivered_packages = [] # initialize list to store delivered packages
     while flag:
-        var = minimum_distance(truck, address_list, distance_list, htable)
-        if var == None:
+        x = minimum_distance(truck, listAddresses, list2DDistances, hTable)
+        if x == None:
             flag = False
             break
         else:
-            var.delivery_status = 'Delivered'
-            distance = distanceBetween(truck.current_location, package_distance, address_list, distance_list )
-            print(distance)
-            
-            truck.current_time += datetime.timedelta(minutes=float(distance/truck.speed))
-            var.tDel = truck.current_time
-            distance_keeper += distance
-            truck.current_location = var.package_address
-            htable.update(var.package_id, var)
+            x.package_delivery_status = 'DELIVERED'
+            x.tDel = truck.current_time # set delivery time to current time
+            delivered_packages.append((x.package_ID, x.package_delivery_status, x.tDel)) # add package ID, delivery status, and delivery time to list
+            dist = distanceBetween(truck.current_location, x.package_address, listAddresses, list2DDistances)
+            truck.current_time += timedelta(minutes = float(float(dist)/float(truck.speed)))
+            totalDistance += float(dist)
+            truck.current_location = x.package_address
+            hTable.update(x.package_ID, x)
+    disToHub = distanceBetween(truck.current_location, listAddresses[0], listAddresses, list2DDistances)
+    truck.current_time += timedelta(minutes = float(float(disToHub)/float(truck.speed)))
+    return [disToHub, totalDistance, truck.current_time, delivered_packages] # add delivered_packages list to returned values
 
-            distance_to_hub = distanceBetween(truck.current_location,address_list[0], address_list, distance_list)
-            truck.current_time += datetime.timedelta(minutes=float(distance_to_hub/truck.speed))
-            return[distance_to_hub, distance_keeper, truck.current_time] 
+#print(delivery(truckone, address_list, distance_list, myhash)[3])
 
 
-print(package_delivery(truckone, address_list, distance_list, myhash)) '''
+def all_delivery_t1():
+    deliveries_t1 = delivery(truckone, address_list, distance_list, myhash)
+    delivered_packages = deliveries_t1[3]
+    print("Package delivery times for truck one:")
+    for package in delivered_packages:
+        print(f"Package {package[0]}: {package[1]} at {package[2]}")
+    return
+
+
+def all_delivery_t2():
+    deliveries_t2= delivery(trucktwo, address_list, distance_list, myhash)
+    delivered_packages = deliveries_t2[3]
+    print("Package delivery times for truck 2:")
+    for package in delivered_packages:
+        print(f"Package {package[0]}: {package[1]} at {package[2]}")
+    return
+
+
+def all_delivery_t3():
+    deliveries_t3 = delivery(truckthree, address_list, distance_list, myhash)
+    delivered_packages = deliveries_t3[3]
+    print("Package delivery times for truck 3:")
+    for package in delivered_packages:
+        print(f"Package {package[0]}: {package[1]} at {package[2]}")
+    return
+#all_delivery_t3()
+
+def all_deliveries():
+    all_delivery_t1()
+    all_delivery_t2()
+    all_delivery_t3()
+
+#all_deliveries()
+
+
+def time_input_package():
+    time_input = input("Enter time: HH:MM:SS")
+    (h,m,s) = time_input.split(":")
+    time_convert = timedelta(hours=int(h), minutes=int(m), seconds=int(s))
+
+
+def delivery_by_id():
+    solo = input("Enter ID: ")
+    d1 = delivery(truckone, address_list, distance_list, myhash)
+    d2 = delivery(trucktwo, address_list, distance_list, myhash)
+    d3 = delivery(truckthree, address_list, distance_list, myhash)
+    delivered_packages = d1[3] + d2[3] + d3[3]
+    for package in delivered_packages:
+        if package[0] == int(solo):
+            delivery_time = package[2]
+            print(f"Package ID {solo} delivered at {delivery_time}.")
+            return
+    print(f"Package ID {solo} not found.")
+
+
+def delivery_by_time():
+    time_input = input("Enter time in format HH:MM:SS to see status of packages at specific time. ")
+    (h,m,s) = time_input.split(":")
+    convert_time = datetime(TODAY.year, TODAY.month, TODAY.day, int(h), int(m), int(s))
+    d1 = delivery(truckone, address_list, distance_list, myhash)
+    d2 = delivery(trucktwo, address_list, distance_list, myhash)
+    d3 = delivery(truckthree, address_list, distance_list, myhash)
+    all_d = d1, d2, d3
+    for delivery_data in all_d:
+        delivered_packages = delivery_data[3]  # get the delivered packages from the delivery data
+        print(f"Delivery status at {convert_time}:")
+        for package in delivered_packages:
+            if package[2] <= convert_time:  # check if package was delivered before or at the specified time
+                print(f"Package ID: {package[0]}, Delivery status: {package[1]}")
+
+
+
+delivery_by_time()
+
+
+
 '''
+
+while True:
+    print('\nWelcome to WGUPS!')
+    print('Please choose an option:')
+    print('1. Print total mileage')
+    print('2. Print delivery time of a single package')
+    print('3. Print delivery times of all packages')
+    print('4. Enter a time to find all packages status')
+    print('5. Exit program')
+    choice = input('> ')
+
+    if choice == '1':
+        deliveryInfo1 = delivery(truckone, address_list, distance_list, myhash)
+        deliveryInfo2 = delivery(trucktwo, address_list, distance_list, myhash)
+        deliveryInfo3 = delivery(truckthree, address_list, distance_list, myhash)
+        total_mileage = deliveryInfo1[1] + deliveryInfo2[1] + deliveryInfo3[1]
+        print(f'Total mileage: {total_mileage} miles')
+        break
+    elif choice == '2':
+        delivery_by_id()
+        break
+    elif choice == '3':
+        all_deliveries()
+        break
+    elif choice == '4':
+
+        break
+    elif choice == '5':
+        print('Exiting program...')
+        break
+
+    else:
+        print('Invalid choice. Please try again.')
+
 '''
 
 
