@@ -16,27 +16,10 @@ class Package:
         self.package_delivery_status = package_delivery_status
         self.load_time = load_time
         self.delivery_time = delivery_time
-        #deadline
-        #delivery time   <-- add these
-        # time departed from hub
+
 
     def __str__(self):
         return "%s, %s, %s, %s, %s, %s, %s, %s, %s" % (self.package_ID, self.package_address,
                                                self.package_city, self.package_state, self.package_zipcode,
                                                self.package_deadline, self.package_delivery_status, self.load_time, self.delivery_time)
 
-
-
-
-
-    '''
-def update(self, status):
-    self.status = status
-
-def return_status(self):
-        return self.status
-'''
-
-
-
-# time left hub attribute

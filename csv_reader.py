@@ -17,11 +17,11 @@ with open('File_Csv/c950_distances.csv') as distance_file:
     distance_data = list(distance_csv)
 
 
-def loadPackageData(packageFile, hashTable):
+def load_package_data(packageFile, hashTable):
 
     with open(packageFile) as csv_file:
 
-        csv_reader = csv.reader(csv_file, delimiter = ',')
+        csv_reader = csv.reader(csv_file, delimiter=',')
 
         for row in csv_reader:
 
@@ -43,14 +43,6 @@ def loadPackageData(packageFile, hashTable):
     return hashTable
 
 myhash = Hashtable()
-# using hashtable search to verify that data is loaded into Hash table
 mypackage = myhash.search(1)
-loadPackageData('File_Csv/c950_package.csv', myhash)
+load_package_data('File_Csv/c950_package.csv', myhash)
 
-#for i in range(len(myhash.list) +2):
-   # print(myhash.search(i+2))
-
-
-#truck = DeliveryTruck(16, 18, "4100 South 700 East", 0, datetime.timedelta(hours=8), None, None)
-
-#print(truck)

@@ -7,7 +7,7 @@ from csv_reader import distance_csv
 import csv
 from HashTable import Hashtable
 from Package import Package
-from csv_reader import loadPackageData
+from csv_reader import load_package_data
 from csv_reader import myhash
 from delivery_truck import DeliveryTruck
 
@@ -23,8 +23,6 @@ print(TODAY)
 START = datetime(TODAY.year, TODAY.month, TODAY.day, 8, 0, 0, 0)
 START_two = datetime(TODAY.year, TODAY.month, TODAY.day, 9, 0, 0, 0)
 START_three = datetime(TODAY.year, TODAY.month, TODAY.day, 10, 30, 0, 0)
-#pkg = myhash.search(1)
-#print(pkg)
 truckone = delivery_truck.DeliveryTruck(16, .3, t1, "4001 South 700 East", 0.0, START, START)
 for i in t1:
     myhash.search(i).load_time = START
@@ -37,8 +35,3 @@ truckthree = delivery_truck.DeliveryTruck(16, .3, t3, "4001 South 700 East", 0.0
 for i in t3:
     myhash.search(i).load_time = START_three
     myhash.search(i).package_delivery_status = "TRANSIT"
-#print(truckone)
-#print(trucktwo)
-alltrucks = truckone, trucktwo, truckthree
-#print(alltrucks)
-#print(truckthree)
