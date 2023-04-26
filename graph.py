@@ -100,43 +100,6 @@ def minimum_distance(truck, listAddresses, list2DDistances, hTable):
 package_distance = minimum_distance(truckone, address_list, distance_list, myhash)
 
 
-def truckDeliverPackages(truck, listAddresses, list2DDistances, hTable):
-    flag = True
-    totalDistance = 0.0
-    while flag:
-        x = minimum_distance(truck, listAddresses, list2DDistances, hTable)
-        if x == None:
-            flag = False
-            break
-        else:
-            x.package_delivery_status = 'DELIVERED'
-            #print(x)
-            dist = distanceBetween(truck.current_location, x.package_address, listAddresses, list2DDistances)
-            #print(truck.current_time)
-            #print(truck.speed)
-            #print(dist)
-            truck.current_time += timedelta(minutes = float(float(dist)/float(truck.speed)))
-            #print(truck.current_time)
-            x.tDel = truck.current_time
-            totalDistance += float(dist)
-            truck.current_location = x.package_address
-            hTable.update(x.package_ID, x)
-    disToHub = distanceBetween(truck.current_location, listAddresses[0], listAddresses, list2DDistances)
-    truck.speed = float(truck.speed)
-    truck.current_time += timedelta(minutes = float(float(disToHub)/float(truck.speed)))
-    #print(truck.current_time)
-    return [disToHub, totalDistance, truck.current_time]
-
-
-
-
-#print(truckDeliverPackages(trucktwo, address_list, distance_list, myhash))
-
-#print(truckDeliverPackages(truckone, address_list, distance_list, myhash))
-
-#print(truckDeliverPackages(truckthree, address_list, distance_list, myhash)[2], "\n")
-
-
 def delivery(truck, listAddresses, list2DDistances, hTable):
     flag = True
     totalDistance = 0.0
@@ -148,8 +111,8 @@ def delivery(truck, listAddresses, list2DDistances, hTable):
             break
         else:
             x.package_delivery_status = 'DELIVERED'
-            x.tDel = truck.current_time # set delivery time to current time
-            delivered_packages.append((x.package_ID, x.package_delivery_status, x.tDel)) # add package ID, delivery status, and delivery time to list
+            x.delivery_time = truck.current_time # set delivery time to current time
+            delivered_packages.append((x.package_ID, x.package_delivery_status, x.delivery_time)) # add package ID, delivery status, and delivery time to list
             dist = distanceBetween(truck.current_location, x.package_address, listAddresses, list2DDistances)
             truck.current_time += timedelta(minutes = float(float(dist)/float(truck.speed)))
             totalDistance += float(dist)
@@ -160,6 +123,32 @@ def delivery(truck, listAddresses, list2DDistances, hTable):
     return [disToHub, totalDistance, truck.current_time, delivered_packages] # add delivered_packages list to returned values
 
 #print(delivery(truckone, address_list, distance_list, myhash)[3])
+
+'''
+delivery(truckone, address_list, distance_list, myhash)
+delivery(trucktwo, address_list, distance_list, myhash)
+delivery(truckthree, address_list, distance_list, myhash)
+'''
+
+def packageStatusAtTime(givenTime, hTab, numberOfPackages):
+    all_deliveries()
+    for i in range(1, numberOfPackages + 1):
+            pck = hTab.search(i)
+            #print(pck)
+
+            if pck.load_time > givenTime:
+
+                print("Package %d is still at the HUB" % i)
+
+            elif givenTime >= pck.load_time and givenTime < pck.delivery_time:
+
+                print("Package %d is ENROUTE ; ETA = %s" % (i, pck.delivery_time))
+
+            elif timeInput >= pck.delivery_time:
+                print("Package %d was DELIVERED at %s" % (i, pck.delivery_time))
+    return
+
+
 
 
 def all_delivery_t1():
@@ -234,11 +223,10 @@ def delivery_by_time():
 
 
 
-delivery_by_time()
+#delivery_by_time()
 
 
 
-'''
 
 while True:
     print('\nWelcome to WGUPS!')
@@ -264,6 +252,22 @@ while True:
         all_deliveries()
         break
     elif choice == '4':
+        hour = input("Enter Hour as an Integer 0-23: ")
+
+        hour = int(str.strip(hour))
+
+        print(hour)
+
+        minute = input("Enter Minute as an Integer 0 - 59: ")
+
+        minute = int(str.strip(minute))
+
+        print(minute)
+
+        timeInput = datetime(TODAY.year, TODAY.month, TODAY.day, hour, minute, 0, 0)
+
+        print(type(timeInput))
+        packageStatusAtTime(timeInput, myhash, 40)
 
         break
     elif choice == '5':
@@ -273,6 +277,7 @@ while True:
     else:
         print('Invalid choice. Please try again.')
 
-'''
+#for i in range(1,41):
+#   print(myhash.search(i))
 
 

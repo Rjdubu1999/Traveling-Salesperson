@@ -34,8 +34,9 @@ def loadPackageData(packageFile, hashTable):
             PACKAGE.package_state = row[3]
             PACKAGE.package_zipcode = row[4]
             PACKAGE.package_deadline = row[5]
-            PACKAGE.package_delivery_status = 'TRANSIT'
-            #PACKAGE.delivery_time = row[6]
+            PACKAGE.package_delivery_status = "AT HUB"
+            PACKAGE.delivery_time = None
+            PACKAGE.load_time = None
 
             hashTable.insert(PACKAGE.package_ID, PACKAGE)
 
