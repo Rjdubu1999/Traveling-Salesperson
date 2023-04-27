@@ -1,6 +1,6 @@
 
 
-class DeliveryTruck:
+class DeliveryTruck:  # Creating class for the delivery truck
 
     def __init__(self, carry_capacity, mph, packages, current_location, miles_traveled, day_start, current_time):
         self.carry_capacity = carry_capacity

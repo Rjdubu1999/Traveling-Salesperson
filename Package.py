@@ -2,10 +2,10 @@ import csv
 from HashTable import Hashtable
 
 
-class Package:
+class Package:  #Creating Package class
 
     def __int__(self, package_id, package_address, package_city, package_state, package_zipcode, package_deadline,
-                package_kg, package_delivery_status, load_time, delivery_time):
+                package_kg, package_delivery_status, load_time, delivery_time):  # Initializing package object
         self.package_ID = package_id
         self.package_address = package_address
         self.package_city = package_city
@@ -17,8 +17,7 @@ class Package:
         self.load_time = load_time
         self.delivery_time = delivery_time
 
-
-    def __str__(self):
+    def __str__(self):  # Turning package arguments into string
         return "%s, %s, %s, %s, %s, %s, %s, %s, %s" % (self.package_ID, self.package_address,
                                                self.package_city, self.package_state, self.package_zipcode,
                                                self.package_deadline, self.package_delivery_status, self.load_time, self.delivery_time)
